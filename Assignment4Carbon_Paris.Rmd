@@ -1,0 +1,31 @@
+---
+title: "Assignment 4 Carbon"
+author: "Sandra Fogg"
+date: "5/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include = FALSE, echo = FALSE}
+#Load Packages
+library(tidyverse)
+library(knitr)
+library(stargazer)
+
+#Laod the Data Set
+mc_carbon_df <- read_csv("HW4Data.csv")
+
+#Notes About Data
+#Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300).
+#Sectors A, B, and C are in country X. Sector D is in a different country, Y.
+#Prices are in $/ton and quantities are in tons.
+
+```
+
+```{r}
+
+```
+
