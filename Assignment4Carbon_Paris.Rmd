@@ -17,6 +17,7 @@ library(stargazer)
 
 #Laod the Data Set
 mc_carbon_df <- read_csv("HW4Data.csv")
+mc_carbon_df
 
 #Notes About Data
 #Current carbon emissions in the sectors are: (A=180, B=200, C=220, and D=300).
@@ -25,7 +26,87 @@ mc_carbon_df <- read_csv("HW4Data.csv")
 
 ```
 
+###Create a Function for Marginal Abatement Cost of Sector "A"
 ```{r}
+#Create Function with Linear Regression
+#Plot the Points and Regression Line
+paris_plotA <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_A)) + geom_point() + geom_smooth(method = "lm")
+paris_plotA
+
+#Find the Equation of the Line
+paris_modelA <- lm(MC_A ~ Abatement, data = mc_carbon_df)
+coef(paris_modelA)
+
+# Intercept for Sector "A"
+#-8.6444767
+
+#Slope for Sector "A"
+#0.5768419
+
+```
+Equation for Sector "A"
+$$Marginal~Abatement~Cost(A) = -8.6444767 + 0.5768419(Price~per~Ton)$$
+###Create a Function for Marginal Abatement Cost of Sector "B"
+```{r}
+#Create Function with Linear Regression
+#Plot the Points and Regression Line
+paris_plotB <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_B)) + geom_point() + geom_smooth(method = "lm")
+paris_plotB
+
+#Find the Equation of the Line
+paris_modelB <- lm(MC_B ~ Abatement, data = mc_carbon_df)
+coef(paris_modelB)
+
+# Intercept for Sector "B"
+#9.3176977
+
+#Slope for Sector "B"
+#0.1987443 
 
 ```
 
+Equation for Sector "B"
+$$Marginal~Abatement~Cost(B) = 9.3176977 + 0.1987443(Price~per~Ton)$$
+
+
+###Create a Function for Marginal Abatement Cost of Sector "C"
+```{r}
+#Create Function with Linear Regression
+#Plot the Points and Regression Line
+paris_plotC <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_C)) + geom_point() + geom_smooth(method = "lm")
+paris_plotC
+
+#Find the Equation of the Line
+paris_modelC <- lm(MC_C ~ Abatement, data = mc_carbon_df)
+coef(paris_modelC)
+
+# Intercept for Sector "C"
+#-11.6550307 
+
+#Slope for Sector "C"
+#0.7838266
+
+```
+Equation for Sector "C"
+$$Marginal~Abatement~Cost(C) = -11.6550307 + 0.7838266(Price~per~Ton)$$
+
+###Create a Function for Marginal Abatement Cost of Sector "D"
+```{r}
+#Create Function with Linear Regression
+#Plot the Points and Regression Line
+paris_plotD <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_D)) + geom_point() + geom_smooth(method = "lm")
+paris_plotD
+
+#Find the Equation of the Line
+paris_modelD <- lm(MC_D ~ Abatement, data = mc_carbon_df)
+coef(paris_modelD)
+
+# Intercept for Sector "D"
+#9.6875061
+
+#Slope for Sector "D"
+#0.2599275
+
+```
+Equation for Sector "D"
+$$Marginal~Abatement~Cost(D) = 9.6875061 + 0.2599275(Price~per~Ton)$$
