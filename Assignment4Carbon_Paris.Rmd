@@ -1,7 +1,5 @@
 ---
-title: "Assignment 4 Carbon"
-author: "Sandra Fogg"
-date: "5/28/2019"
+title: "Appendix"
 output: html_document
 ---
 
@@ -27,7 +25,7 @@ mc_carbon_df
 ```
 
 ###Create a Function for Marginal Abatement Cost of Sector "A"
-```{r}
+```{r, include = FALSE}
 #Create Function with Linear Regression
 #Plot the Points and Regression Line
 paris_plotA <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_A)) + geom_point() + geom_smooth(method = "lm")
@@ -46,8 +44,11 @@ coef(paris_modelA)
 ```
 Equation for Sector "A"
 $$Marginal~Abatement~Cost(A) = -8.6444767 + 0.5768419(Price~per~Ton)$$
+
+
+
 ###Create a Function for Marginal Abatement Cost of Sector "B"
-```{r}
+```{r, include=FALSE}
 #Create Function with Linear Regression
 #Plot the Points and Regression Line
 paris_plotB <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_B)) + geom_point() + geom_smooth(method = "lm")
@@ -70,7 +71,7 @@ $$Marginal~Abatement~Cost(B) = 9.3176977 + 0.1987443(Price~per~Ton)$$
 
 
 ###Create a Function for Marginal Abatement Cost of Sector "C"
-```{r}
+```{r, include = FALSE}
 #Create Function with Linear Regression
 #Plot the Points and Regression Line
 paris_plotC <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_C)) + geom_point() + geom_smooth(method = "lm")
@@ -91,7 +92,7 @@ Equation for Sector "C"
 $$Marginal~Abatement~Cost(C) = -11.6550307 + 0.7838266(Price~per~Ton)$$
 
 ###Create a Function for Marginal Abatement Cost of Sector "D"
-```{r}
+```{r, include = FALSE}
 #Create Function with Linear Regression
 #Plot the Points and Regression Line
 paris_plotD <- ggplot(mc_carbon_df, aes(x = mc_carbon_df$Abatement, y = mc_carbon_df$MC_D)) + geom_point() + geom_smooth(method = "lm")
@@ -110,3 +111,29 @@ coef(paris_modelD)
 ```
 Equation for Sector "D"
 $$Marginal~Abatement~Cost(D) = 9.6875061 + 0.2599275(Price~per~Ton)$$
+
+
+```{r, echo = FALSE, message = FALSE, include = FALSE}
+#Create a "tidy" Data Frame
+colnames(mc_carbon_df) <- c("Abatement", "A", "B", "C", "D")
+
+carbon_tidy <- mc_carbon_df %>% 
+  gather(Sector, Price, A:D) 
+```
+
+###Create a Plot for All of the Sectors
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#Create a Plot of All Sectors
+
+paris_plot_all <- ggplot(carbon_tidy, aes(x = Abatement, y = Price)) + geom_point() + geom_smooth(method = "lm", title = "Marginal Abatement Costs by Sector", color = "red4") + facet_wrap(~Sector) + theme_classic() + ggtitle("Marginal Abatement Costs by Sector")
+
+paris_plot_all
+
+```
+
+
+####Create a Table of Regression Results
+```{r, message = FALSE, echo = FALSE, warning = FALSE}
+regression_results <- stargazer(paris_modelA, paris_modelB, paris_modelC, paris_modelD, type="text", title="Table 1: Marginal Abatement Cost Regression Results")
+
+```
