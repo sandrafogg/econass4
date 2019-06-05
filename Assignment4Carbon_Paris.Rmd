@@ -36,14 +36,14 @@ paris_modelA <- lm(MC_A ~ Abatement, data = mc_carbon_df)
 coef(paris_modelA)
 
 # Intercept for Sector "A"
-#-8.6444767
+int_a <- -8.6444767
 
 #Slope for Sector "A"
-#0.5768419
+slope_a <- 0.5768419
 
 ```
 Equation for Sector "A"
-$$Marginal~Abatement~Cost(A) = -8.6444767 + 0.5768419(Price~per~Ton)$$
+$$Marginal~Abatement~Cost(A) = -8.6444767 + 0.5768419(Tons~of~Abatement)$$
 
 
 
@@ -58,16 +58,17 @@ paris_plotB
 paris_modelB <- lm(MC_B ~ Abatement, data = mc_carbon_df)
 coef(paris_modelB)
 
-# Intercept for Sector "B"
-#9.3176977
+
+#Intercept for Sector "B"
+int_b <- 9.3176977
 
 #Slope for Sector "B"
-#0.1987443 
+slope_b <- 0.1987443 
 
 ```
 
 Equation for Sector "B"
-$$Marginal~Abatement~Cost(B) = 9.3176977 + 0.1987443(Price~per~Ton)$$
+$$Marginal~Abatement~Cost(B) = 9.3176977 + 0.1987443(Tons~of~Abatement)$$
 
 
 ###Create a Function for Marginal Abatement Cost of Sector "C"
@@ -82,14 +83,14 @@ paris_modelC <- lm(MC_C ~ Abatement, data = mc_carbon_df)
 coef(paris_modelC)
 
 # Intercept for Sector "C"
-#-11.6550307 
+int_c <- -11.6550307 
 
 #Slope for Sector "C"
-#0.7838266
+slope_c <- 0.7838266
 
 ```
 Equation for Sector "C"
-$$Marginal~Abatement~Cost(C) = -11.6550307 + 0.7838266(Price~per~Ton)$$
+$$Marginal~Abatement~Cost(C) = -11.6550307 + 0.7838266(Tons~of~Abatement)$$
 
 ###Create a Function for Marginal Abatement Cost of Sector "D"
 ```{r, include = FALSE}
@@ -103,14 +104,14 @@ paris_modelD <- lm(MC_D ~ Abatement, data = mc_carbon_df)
 coef(paris_modelD)
 
 # Intercept for Sector "D"
-#9.6875061
+int_d <- 9.6875061
 
 #Slope for Sector "D"
-#0.2599275
+slope_d <- 0.2599275
 
 ```
 Equation for Sector "D"
-$$Marginal~Abatement~Cost(D) = 9.6875061 + 0.2599275(Price~per~Ton)$$
+$$Marginal~Abatement~Cost(D) = 9.6875061 + 0.2599275(Tons~of~Abatement)$$
 
 
 ```{r, echo = FALSE, message = FALSE, include = FALSE}
@@ -135,5 +136,154 @@ paris_plot_all
 ####Create a Table of Regression Results
 ```{r, message = FALSE, echo = FALSE, warning = FALSE}
 regression_results <- stargazer(paris_modelA, paris_modelB, paris_modelC, paris_modelD, type="text", title="Table 1: Marginal Abatement Cost Regression Results")
+
+```
+
+
+###Derive Demand Curves and WTP at Current Levels of Emissions 
+```{r, include = FALSE}
+#Marginal Abatement Costs at Current Emissions
+mccurrent_A <- -8.6444767 + (0.5768419*180)
+mccurrent_B <- 9.3176977 + (0.1987443*200)
+mccurrent_C <- -11.6550307 + (0.7838266*220)
+mccurrent_D <- 9.6875061 + (0.2599275*300)
+
+mccurrent_A #$95.18707
+mccurrent_B #$49.06656
+mccurrent_C #$160.7868
+mccurrent_D #$87.66576
+
+
+(mccurrent_A-0)/0.5768419
+(mccurrent_B-0)/0.1987443
+(mccurrent_C-0)/0.7838266
+(mccurrent_D-0)/0.2599275
+
+
+
+```
+
+
+
+```{r}
+#Derive Demand Curve of Sector A
+
+# Use Quantities from 0 to 180 by 5 to Estimate a Demand Curve
+vector_demand_A <- seq(0,180,by=5)
+# Write function for demand curve for Sector A
+demand_A_function <- function(x){(slope_a*(180-x)) + int_a}
+
+
+# Derive demand curve using the values above
+demand_A <- demand_A_function(vector_demand_A)
+demand_A
+
+# Graph it to see if this worked....
+demand_A_gph <- curve(demand_A_function, from=0, to=180, xlab = "x", ylab = "y")
+
+#Derive Demand Curve of Sector B
+
+# Use Quantities from 0 to 200 by 5 to Estimate a Demand Curve
+vector_demand_B <- seq(0,200,by=5)
+# Write function for demand curve for Sector A
+demand_B_function <- function(x){(slope_b*(200-x)) + int_b}
+
+
+# Derive demand curve using the values above
+demand_B <- demand_B_function(vector_demand_B)
+demand_B
+
+# Graph it to see if this worked....
+demand_B_gph <- curve(demand_B_function, from=0, to=200, xlab = "x", ylab = "y")
+
+#Derive Demand Curve of Sector C
+
+# Use Quantities from 0 to 220 by 5 to Estimate a Demand Curve
+vector_demand_C <- seq(0,220,by=5)
+# Write function for demand curve for Sector A
+demand_C_function <- function(x){(slope_c*(220-x)) + int_c}
+
+
+# Derive demand curve using the values above
+demand_C <- demand_C_function(vector_demand_C)
+demand_C
+
+# Graph it to see if this worked....
+demand_C_gph <- curve(demand_C_function, from=0, to=220, xlab = "x", ylab = "y")
+
+#Derive Demand Curve of Sector D
+
+# Use Quantities from 0 to 300 by 5 to Estimate a Demand Curve
+vector_demand_D <- seq(0,300,by=5)
+# Write function for demand curve for Sector A
+demand_D_function <- function(x){(slope_d*(300-x)) + int_d}
+
+
+# Derive demand curve using the values above
+demand_D <- demand_D_function(vector_demand_D)
+demand_D
+
+# Graph it to see if this worked....
+demand_D_gph <- curve(demand_D_function, from=0, to=300, xlab = "x", ylab = "y")
+```
+
+###Graph all Demand Curves
+```{r}
+demand_plot <- ggplot(data.frame(x = c(0, 350))) + 
+  stat_function(fun = demand_A_function, aes(color = "A")) +
+  stat_function(fun = demand_B_function, aes(color = "B")) +
+  stat_function(fun = demand_C_function, aes(color = "C")) +
+  stat_function(fun = demand_D_function, aes(color = "D")) +
+  scale_y_continuous(limits= c(-10,170), expand = c(0,0)) +
+  scale_x_continuous(limits= c(0, 350), expand = c(0,0)) + 
+  labs(fill = "", color = "Sectors") + 
+  xlab("\n Carbon Abatement (ton)") + 
+  ylab("Marginal Cost \n($/ton) \n") + 
+  theme_classic() +
+  ggtitle("Demand: Marginal Cost of Abatement\n") +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title.y = element_text(angle=0, hjust = 0.5, vjust = 0.5)) 
+demand_plot
+
+
+
+
+```
+
+
+
+
+
+
+```{r}
+#DONT NEED THIS SECTION RIGHT NOW
+
+#Combine curves
+demand_A$type<- rep("A", length(demand_A$x))
+demand_B$type<- rep("B", length(demand_B$x))
+demand_C$type<-rep("C", length(demand_C$x))
+demand_D$type<- rep("D", length(demand_D$x))
+
+da_df <- as_data_frame(demand_A) %>% 
+  mutate("Sector" = "A")
+da_df
+
+db_df <- as_data_frame(demand_B) %>% 
+  mutate("Sector" = "B")
+db_df
+
+dc_df <- as_data_frame(demand_C) %>% 
+  mutate("Sector" = "C")
+dc_df
+
+dd_df <- as_data_frame(demand_D) %>% 
+  mutate("Sector" = "D")
+dd_df
+
+all_demand <- cbind(demand_A, demand_B, demand_C, demand_D)
+
+all_demand
+demand_tidy <- all_demand %>% 
+  gather(Sector, Price, A:D) 
 
 ```
