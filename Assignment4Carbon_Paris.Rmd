@@ -1,6 +1,8 @@
 ---
 title: "Appendix"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -148,10 +150,14 @@ mccurrent_B <- 9.3176977 + (0.1987443*200)
 mccurrent_C <- -11.6550307 + (0.7838266*220)
 mccurrent_D <- 9.6875061 + (0.2599275*300)
 
+
+#WTP for the First Unit 
 mccurrent_A #$95.18707
 mccurrent_B #$49.06656
 mccurrent_C #$160.7868
 mccurrent_D #$87.66576
+
+
 
 
 (mccurrent_A-0)/0.5768419
@@ -163,9 +169,9 @@ mccurrent_D #$87.66576
 
 ```
 
+Sector C is Willing to Pay the Most for Abatement
 
-
-```{r}
+```{r, include = FALSE}
 #Derive Demand Curve of Sector A
 
 # Use Quantities from 0 to 180 by 5 to Estimate a Demand Curve
@@ -225,17 +231,35 @@ demand_D
 
 # Graph it to see if this worked....
 demand_D_gph <- curve(demand_D_function, from=0, to=300, xlab = "x", ylab = "y")
+
+
+
+
+#Find all new Demand Curves at Current Level
+#Use new points to find new slopes
+
+
+slope_a #-0.5768419
+slope_b #-0.2453285
+slope_c #-0.7308526
+slope_d #-0.2922217
+
+mccurrent_A #$95.18707 or intercept
+mccurrent_B #$49.06656 or intercept
+mccurrent_C #$160.7868 or intercept
+mccurrent_D #$87.66576 or intercept
+
 ```
 
 ###Graph all Demand Curves
-```{r}
+```{r, message = FALSE, echo = FALSE, warning=FALSE}
 demand_plot <- ggplot(data.frame(x = c(0, 350))) + 
   stat_function(fun = demand_A_function, aes(color = "A")) +
   stat_function(fun = demand_B_function, aes(color = "B")) +
   stat_function(fun = demand_C_function, aes(color = "C")) +
   stat_function(fun = demand_D_function, aes(color = "D")) +
-  scale_y_continuous(limits= c(-10,170), expand = c(0,0)) +
-  scale_x_continuous(limits= c(0, 350), expand = c(0,0)) + 
+  scale_y_continuous(limits= c(-12,170), expand = c(0,0)) +
+  scale_x_continuous(limits= c(0, 400), expand = c(0,0)) + 
   labs(fill = "", color = "Sectors") + 
   xlab("\n Carbon Abatement (ton)") + 
   ylab("Marginal Cost \n($/ton) \n") + 
@@ -250,40 +274,109 @@ demand_plot
 
 ```
 
+$$MC_A = -0.5768419(Emissions) + 95.18707$$
+$$MC_B = -0.2453285(Emissions) + 49.06656 $$
+$$MC_C = -0.7308526Emissions) + 160.7868 $$
+$$MC_D = -0.2922217(Emissions)+ 87.66576 $$
+
+###Cutting Carbon Emissions in Half
+####Policy Option 1: Cap on Carbon
+```{r}
+# Create a Data Frame for Abatement
+abate_df <-c(100, 100, 100, 300)
+
+#Calculate Marginal Cost of Abatement of 100 tons
+MC_100_A<-(-slope_a*100) + int_a 
+MC_100_B<-(slope_b*100) + int_b
+MC_100_C<-(slope_c*100) + int_c
+
+MC_100_countryX <- rbind(MC_100_A, MC_100_B, MC_100_C, NA)
+MC_100_countryX
+
+#Find the Area Under the Curve to Find the Total Cost of Each Sector
+Cost_A<-(MC_100_A*100)+(100*(int_a-MC_100_A)*0.5)
+Cost_B<-(MC_100_B*100)+(100*(int_b-MC_100_B)*0.5)
+Cost_C<-(MC_100_C*100)+(100*(int_c-MC_100_C)*0.5)
+
+#Find the Total Cost of Abatement
+Total_Cost <- sum(Cost_A, Cost_B, Cost_C)
+Total_Costs_df <- rbind(Cost_A, Cost_B, Cost_C, Total_Cost)
+
+Total_Costs_Abatement_df <- cbind(abate_df, MC_100_countryX, Total_Costs_df) 
+
+colnames(Total_Costs_Abatement_df) = c("Tons Abated","Marginal Cost","Total Cost")
+
+row.names(Total_Costs_Abatement_df) =c("Sector A", "Sector B", "Sector C", "Country X Total")
+
+Total_Costs_Abatement_df
+
+```
+
 
 
 
 
 
 ```{r}
-#DONT NEED THIS SECTION RIGHT NOW
+#Cut Carbon by 100 in Sectors A, B, C 
+#Use Quantities from 0 to 80 by 5 to Estimate a Demand Curve
+vector_demand_A_h <- seq(0,180,by=5)
 
-#Combine curves
-demand_A$type<- rep("A", length(demand_A$x))
-demand_B$type<- rep("B", length(demand_B$x))
-demand_C$type<-rep("C", length(demand_C$x))
-demand_D$type<- rep("D", length(demand_D$x))
+# Write function for demand curve for Sector A
+demand_A_function_h <- function(x){(slope_a*(80-x)) + int_a}
 
-da_df <- as_data_frame(demand_A) %>% 
-  mutate("Sector" = "A")
-da_df
 
-db_df <- as_data_frame(demand_B) %>% 
-  mutate("Sector" = "B")
-db_df
+# Derive Demand Curve Using the Values 
+demand_A_h <- demand_A_function_h(vector_demand_A_h)
+demand_A_h
 
-dc_df <- as_data_frame(demand_C) %>% 
-  mutate("Sector" = "C")
-dc_df
+# Graph it
+demand_A_gph_h <- curve(demand_A_function_h, from=0, to=80, xlab = "x", ylab = "y")
 
-dd_df <- as_data_frame(demand_D) %>% 
-  mutate("Sector" = "D")
-dd_df
+#Derive Demand Curve of Sector B
 
-all_demand <- cbind(demand_A, demand_B, demand_C, demand_D)
+# Use Quantities from 0 to 100 by 5 to Estimate a Demand Curve
+vector_demand_B_h <- seq(0,100,by=5)
+# Write function for demand curve for Sector A
+demand_B_function_h <- function(x){(slope_b*(100-x)) + int_b}
 
-all_demand
-demand_tidy <- all_demand %>% 
-  gather(Sector, Price, A:D) 
+
+# Derive Demand Curve Using the Values 
+demand_B_h <- demand_B_function_h(vector_demand_B_h)
+demand_B_h
+# Graph it
+demand_B_gph_h <- curve(demand_B_function_h, from=0, to=100, xlab = "x", ylab = "y")
+
+#Derive Demand Curve of Sector C
+
+# Use Quantities from 0 to 120 by 5 to Estimate a Demand Curve
+vector_demand_C_h <- seq(0,120,by=5)
+# Write function for demand curve for Sector A
+demand_C_function_h <- function(x){(slope_c*(120-x)) + int_c}
+
+
+# Derive Demand Curve Using the Values 
+demand_C_h <- demand_C_function_h(vector_demand_C_h)
+demand_C_h
+
+# Graph it
+demand_C_gph_h <- curve(demand_C_function_h, from=0, to=120, xlab = "x", ylab = "y")
+
+#Marginal Abatement Costs at 100 Less Emissions
+mch_A <- -8.6444767 + (0.5768419*80)
+mch_B <- 9.3176977 + (0.1987443*100)
+mch_C <- -11.6550307 + (0.7838266*120)
+
+
+
+#WTP for the First Unit 
+mch_A #$37.50288
+mch_B #$29.19213
+mch_C #$82.40416
+
+#Sector C Still Willing to Pay More
+
+
 
 ```
+
