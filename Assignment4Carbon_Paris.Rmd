@@ -311,11 +311,50 @@ row.names(Total_Costs_Abatement_df) =c("Sector A", "Sector B", "Sector C", "Coun
 Total_Costs_Abatement_df
 
 ```
+The total cost for Sector A is $3748.6572
+The total cost for Sector B is $294.8727
+The total cost for Sector C is $4819.7660
+The total cost for country X is $8863.2959.
+There is no tax revenue for this policy option. 
+
+
+
+####Policy Option 2: Tax on Carbon
+```{r}
+
+```
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#WRONG
 
 ```{r}
 #Cut Carbon by 100 in Sectors A, B, C 
