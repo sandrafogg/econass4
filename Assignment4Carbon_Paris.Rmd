@@ -239,10 +239,10 @@ demand_D_gph <- curve(demand_D_function, from=0, to=300, xlab = "x", ylab = "y")
 #Use new points to find new slopes
 
 
-slope_a #-0.5768419
-slope_b #-0.2453285
-slope_c #-0.7308526
-slope_d #-0.2922217
+slope_a_d <- -0.5768419
+slope_b_d <- -0.2453285
+slope_c_d <- -0.7308526
+slope_d_d <- -0.2922217
 
 mccurrent_A #$95.18707 or intercept
 mccurrent_B #$49.06656 or intercept
@@ -286,9 +286,9 @@ $$MC_D = -0.2922217(Emissions)+ 87.66576 $$
 abate_df <-c(100, 100, 100, 300)
 
 #Calculate Marginal Cost of Abatement of 100 tons
-MC_100_A<-(-slope_a*100) + int_a 
-MC_100_B<-(slope_b*100) + int_b
-MC_100_C<-(slope_c*100) + int_c
+MC_100_A<-(-slope_a_d*100) + int_a 
+MC_100_B<-(slope_b_d*100) + int_b
+MC_100_C<-(slope_c_d*100) + int_c
 
 MC_100_countryX <- rbind(MC_100_A, MC_100_B, MC_100_C, NA)
 MC_100_countryX
@@ -311,11 +311,102 @@ row.names(Total_Costs_Abatement_df) =c("Sector A", "Sector B", "Sector C", "Coun
 Total_Costs_Abatement_df
 
 ```
+The total cost for Sector A is $3748.6572
+The total cost for Sector B is $294.8727
+The total cost for Sector C is $4819.7660
+The total cost for country X is $8863.2959.
+There is no tax revenue for this policy option. 
+
+
+
+####Policy Option 2: Tax on Carbon
+
+```{r}
+#Find the Demand Curves for Each Sector and Switch in Terms of X to find Aggregate Demand
+
+#For Sector A
+A_demand_x_intercept <- (-int_a/-slope_a_d)
+A_demand_x_intercept
+A_demand_x_slope <- (1/-slope_a_d)
+A_demand_tax <- function(x){A_demand_x_intercept + A_demand_x_slope*x}
+
+
+#For Sector B
+B_demand_x_intercept <- (-int_b/slope_b_d)
+B_demand_x_slope <- (1/slope_b_d)
+B_demand_tax <- function(x){B_demand_x_intercept + B_demand_x_slope*x}
+
+
+#For Sector C
+C_demand_x_intercept <- (-int_c/slope_c_d)
+C_demand_x_slope <- (1/slope_c_d)
+C_demand_tax <- function(x){C_demand_x_intercept + C_demand_x_slope*x}
+
+
+#Add the Demand Curves Together to Find the Aggregate
+Agg_demand_intercept <- sum(A_demand_x_intercept, B_demand_x_intercept, C_demand_x_intercept)
+Agg_demand_slope <- sum(A_demand_x_slope, B_demand_x_slope, C_demand_x_slope)
+
+
+#Switch the Aggregate Demand Curve Back in terms of P (price)
+Agg_demand_p_intercept <- (-Agg_demand_intercept/Agg_demand_slope)
+Agg_demand_p_slope <- (1/Agg_demand_slope)
+Agg_demand_curve_tax <- function(x){Agg_demand_p_intercept + Agg_demand_p_slope*x}
+
+
+#Find the Optimal Tax by Inputting Desired Level of Emissions (300 Tons)
+optimal_tax <- Agg_demand_curve_tax(300)
+optimal_tax
+```
+
+```{r}
+#emissions from sector A
+a_emissions_tax <- a_demand1(optimal_tax)
+#102.66 tons of CO2 
+#cost of reduction for sector A
+#emissions from sector B
+b_emissions_tax <- b_demand1(optimal_tax)
+#33.30
+#cost of reduction for sector B
+#original 
+#emissions from sector C
+c_emissions_tax <- c_demand1(optimal_tax)
+#164.04
+#cost of reduction for sector C
+
+```
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#WRONG
 
 ```{r}
 #Cut Carbon by 100 in Sectors A, B, C 
