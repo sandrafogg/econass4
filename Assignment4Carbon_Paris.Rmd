@@ -131,6 +131,7 @@ carbon_tidy <- mc_carbon_df %>%
 paris_plot_all <- ggplot(carbon_tidy, aes(x = Abatement, y = Price)) + geom_point() + geom_smooth(method = "lm", title = "Marginal Abatement Costs by Sector", color = "red4") + facet_wrap(~Sector) + theme_classic() + ggtitle("Marginal Abatement Costs by Sector")
 
 paris_plot_all
+plot(paris_plot_all)
 
 ```
 
@@ -156,8 +157,6 @@ mccurrent_A #$95.18707
 mccurrent_B #$49.06656
 mccurrent_C #$160.7868
 mccurrent_D #$87.66576
-
-
 
 
 (mccurrent_A-0)/0.5768419
@@ -281,67 +280,88 @@ $$MC_D = -0.2922217(Emissions)+ 87.66576 $$
 
 ###Cutting Carbon Emissions in Half
 ####Policy Option 1: Cap on Carbon
-```{r}
-# Create a Data Frame for Abatement
-abate_df <-c(100, 100, 100, 300)
+Suppose to meet the Paris Accord commitments, Country X (which contains sectors A, B, and C) needs to cut all carbon emissions in half. For each policy option derive the following:  
+1. The total cost of meeting the target in Country X  
+2. The cost (or benefit) to each sector  
+3. The tax revenue generated  
+####a. Cap on Carbon  
+```{r include=FALSE}
+# Each sector cuts emissions by 100 - abates 100 
+################# Part 1 Write abatement curve functions for each sector and plug in 100 for Q
+#### Abatement function Sector A
+Abatement_curve_A <- function(x){(slope_a*x) + int_a}
+cost_100_A <- Abatement_curve_A(100) 
+cost_100_A
 
-#Calculate Marginal Cost of Abatement of 100 tons
-MC_100_A<-(-slope_a_d*100) + int_a 
-MC_100_B<-(slope_b_d*100) + int_b
-MC_100_C<-(slope_c_d*100) + int_c
+#### Abatement function Sector B
+Abatement_curve_B <- function(x){(slope_b*x) + int_b}
+cost_100_B <- Abatement_curve_B(100)
+cost_100_B
 
-MC_100_countryX <- rbind(MC_100_A, MC_100_B, MC_100_C, NA)
-MC_100_countryX
+#### Abatement function Sector C
+Abatement_curve_C <- function(x){(slope_c*x) + int_c}
+cost_100_C <- Abatement_curve_C(100)
+cost_100_C 
 
-#Find the Area Under the Curve to Find the Total Cost of Each Sector
-Cost_A<-(MC_100_A*100)+(100*(int_a-MC_100_A)*0.5)
-Cost_B<-(MC_100_B*100)+(100*(int_b-MC_100_B)*0.5)
-Cost_C<-(MC_100_C*100)+(100*(int_c-MC_100_C)*0.5)
 
-#Find the Total Cost of Abatement
-Total_Cost <- sum(Cost_A, Cost_B, Cost_C)
-Total_Costs_df <- rbind(Cost_A, Cost_B, Cost_C, Total_Cost)
+################## Part 2 Integrate to find the area under the curve (the cost of abatement from 0-100)
+area_100_A <- integrate(Abatement_curve_A, lower = 0, upper = 100)$value
+area_100_A #$2019.762
+area_100_B <- integrate(Abatement_curve_B, lower = 0, upper = 100)$value
+area_100_B #$1925.491
+area_100_C <- integrate(Abatement_curve_C, lower = 0, upper = 100)$value
+areac_100_C #$2753.63
 
-Total_Costs_Abatement_df <- cbind(abate_df, MC_100_countryX, Total_Costs_df) 
-
-colnames(Total_Costs_Abatement_df) = c("Tons Abated","Marginal Cost","Total Cost")
-
-row.names(Total_Costs_Abatement_df) =c("Sector A", "Sector B", "Sector C", "Country X Total")
-
-Total_Costs_Abatement_df
-
+################## Part 3 Add all areas together to find the total cost of abating 100 units from each sector
+total_cost_abatement_100 <- area_100_A + area_100_B + area_100_C
+tca <- round(total_cost_abatement_100, digits =2) #6698.883
+tca
 ```
-The total cost for Sector A is $3748.6572
-The total cost for Sector B is $294.8727
-The total cost for Sector C is $4819.7660
-The total cost for country X is $8863.2959.
-There is no tax revenue for this policy option. 
+
+Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The total cost of carbon cap is the sum of the costs of three sectors.
+
+1. Total Cost of Carbon Cap     
+
+$$Total~Cost = 6698.88$$  
+
+
+2. Cost to each Sector      
+
+$Cost(Sector~A) = `r round(area_100_A, digits=2)`$  $2019.762  
+
+$Cost(Sector~B) = `r round(area_100_B, digits=2)`$  $1925.491 
+
+$Cost(Sector~C) = `r round(area_100_C, digits=2)`$  $2753.63
+
+3. Tax Revenue  
+
+With a cap on carbon, there is no generated tax revenue. 
+
+
 
 
 
 ####Policy Option 2: Tax on Carbon
-<<<<<<< HEAD
 
 ```{r}
 #Find the Demand Curves for Each Sector and Switch in Terms of X to find Aggregate Demand
 
 #For Sector A
-A_demand_x_intercept <- (-int_a/-slope_a_d)
-A_demand_x_intercept
-A_demand_x_slope <- (1/-slope_a_d)
-A_demand_tax <- function(x){A_demand_x_intercept + A_demand_x_slope*x}
+A_demand_x_intercept <- (-int_a/slope_a)
+A_demand_x_slope <- (1/slope_a)
+A_demand_tax <- function(p){A_demand_x_intercept + A_demand_x_slope*p}
 
 
 #For Sector B
-B_demand_x_intercept <- (-int_b/slope_b_d)
-B_demand_x_slope <- (1/slope_b_d)
-B_demand_tax <- function(x){B_demand_x_intercept + B_demand_x_slope*x}
+B_demand_x_intercept <- (-int_b/slope_b)
+B_demand_x_slope <- (1/slope_b)
+B_demand_tax <- function(p){B_demand_x_intercept + B_demand_x_slope*p}
 
 
 #For Sector C
-C_demand_x_intercept <- (-int_c/slope_c_d)
-C_demand_x_slope <- (1/slope_c_d)
-C_demand_tax <- function(x){C_demand_x_intercept + C_demand_x_slope*x}
+C_demand_x_intercept <- (-int_c/slope_c)
+C_demand_x_slope <- (1/slope_c)
+C_demand_tax <- function(p){C_demand_x_intercept + C_demand_x_slope*p}
 
 
 #Add the Demand Curves Together to Find the Aggregate
@@ -358,120 +378,101 @@ Agg_demand_curve_tax <- function(x){Agg_demand_p_intercept + Agg_demand_p_slope*
 #Find the Optimal Tax by Inputting Desired Level of Emissions (300 Tons)
 optimal_tax <- Agg_demand_curve_tax(300)
 optimal_tax
+
+#Find the Tax Revenue by Multiplying times the Optimal Emissions
+tax_revenue_tax <- optimal_tax*300
+tax_revenue_tax
+
+
+#Find the Cost for Each Sector
+
+#The Cost for Sector A
+# Sector A 
+quantity_abatement_A <- A_demand_tax(optimal_tax)
+quantity_abatement_A # 83.33489
+cost_A_tax <- integrate(Abatement_curve_A, lower = 0, upper = quantity_abatement_A)$value + ((180-83.3)*optimal_tax)
+cost_A_tax
+
+# Sector B 
+quantity_abatement_B <- B_demand_tax(optimal_tax) 
+quantity_abatement_B # 151.4956
+quantity_abatement_B*optimal_tax
+cost_B_tax <- integrate(Abatement_curve_B, lower = 0, upper = quantity_abatement_B)$value + ((200-151.5)*optimal_tax)
+cost_B_tax
+
+# Sector C 
+quantity_abatement_C <- C_demand_tax(optimal_tax) 
+quantity_abatement_C #65.16953
+cost_C_tax <- integrate(Abatement_curve_C, lower = 0, upper = quantity_abatement_C)$value + ((220-65.2)*optimal_tax)
+cost_C_tax
+
+# Aggregated cost
+cost_agg_tax <- sum(cost_A_tax, cost_B_tax, cost_C_tax)
+cost_agg_tax
 ```
 
-```{r}
-#emissions from sector A
-a_emissions_tax <- a_demand1(optimal_tax)
-#102.66 tons of CO2 
-#cost of reduction for sector A
-#emissions from sector B
-b_emissions_tax <- b_demand1(optimal_tax)
-#33.30
-#cost of reduction for sector B
-#original 
-#emissions from sector C
-c_emissions_tax <- c_demand1(optimal_tax)
-#164.04
-#cost of reduction for sector C
-=======
-```{r}
->>>>>>> 4accbe4a51dc0260faefa397cec6ec39de0de917
+The optimal tax is $39.43
 
+The total cost is 17707.79
+
+The cost to Sector A 5095.162
+
+The cost to Sector B 5604.46
+
+The cost to Sector C 7008.164
+
+The tax revenue is $11827.97
+
+
+Even though they are initially allocated current emissions minus 100, cap and trade will satisfy the equal marginal principle and the total reduction of 300 will be distributed between the three sectors just like in the part b. The marginal cost of abatement will be equal for all sectors which is equal to the marginal cost of abatement of 300th unit on the aggregate cost curve.
+
+1. Total Cost of Carbon Cap and Trade     
+
+The total cost of the cap and trade is the area under the aggregate cost curve from 0 to 300.
+```{r include=FALSE}
+# Sector A 
+#Abates 83.33489 and buys (100-83.33489) from Sector B
+cost_A_cap <- integrate(Abatement_curve_A, lower = 0, upper = quantity_abatement_A)$value + ((100-83.33489)*optimal_tax)
+cost_A_cap # $1939.66
+
+
+# Sector B 
+ #Abates 151.4956 and sells (200-151.4956) to A and C
+cost_B_cap <- integrate(Abatement_curve_B, lower = 0, upper = quantity_abatement_B)$value - ((200-151.4956)*optimal_tax)
+cost_B_cap # $1779.909
+
+
+# Sector C 
+# Abates 65.16953 and buys (100-65.16953) from B
+cost_C_cap <- integrate(Abatement_curve_C, lower = 0, upper = quantity_abatement_C)$value + ((100-65.16953)*optimal_tax)
+cost_C_cap # $2278.176
+
+
+cost_Agg_cap<- cost_A_cap + cost_B_cap + cost_C_cap
+cost_Agg_cap # $5997.744
+#costagg_cap <- integrate(agg_abate, lower = 0, upper = 300)$value
 ```
+$Total~Cost~Cap~and~Trade = `r round(costagg_cap, digits=2)`$  
+
+2. Cost/Benefits to each Sector  
+
+Each sector is allocated their current emissions minus 100 tons. The outcome of trading will be the same as if the carbon tax was imposed so the cost of abating is equal to the area under the marginal abatement curve from 0 to the quantity abated. 
+
+
+
+$Cost~to~Sector~A = `r round(costa_cap, digits=2)`$      
+
+$Cost~to~Sector~B = `r round(costb_cap, digits=2)`$      
+
+$Cost~to~Sector~C = `r round(costc_cap, digits=2)`$  
+   
+
+3. Tax Revenue    
+
+There is no tax revenue with a cap and trade.  
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#WRONG
-
-```{r}
-#Cut Carbon by 100 in Sectors A, B, C 
-#Use Quantities from 0 to 80 by 5 to Estimate a Demand Curve
-vector_demand_A_h <- seq(0,180,by=5)
-
-# Write function for demand curve for Sector A
-demand_A_function_h <- function(x){(slope_a*(80-x)) + int_a}
-
-
-# Derive Demand Curve Using the Values 
-demand_A_h <- demand_A_function_h(vector_demand_A_h)
-demand_A_h
-
-# Graph it
-demand_A_gph_h <- curve(demand_A_function_h, from=0, to=80, xlab = "x", ylab = "y")
-
-#Derive Demand Curve of Sector B
-
-# Use Quantities from 0 to 100 by 5 to Estimate a Demand Curve
-vector_demand_B_h <- seq(0,100,by=5)
-# Write function for demand curve for Sector A
-demand_B_function_h <- function(x){(slope_b*(100-x)) + int_b}
-
-
-# Derive Demand Curve Using the Values 
-demand_B_h <- demand_B_function_h(vector_demand_B_h)
-demand_B_h
-# Graph it
-demand_B_gph_h <- curve(demand_B_function_h, from=0, to=100, xlab = "x", ylab = "y")
-
-#Derive Demand Curve of Sector C
-
-# Use Quantities from 0 to 120 by 5 to Estimate a Demand Curve
-vector_demand_C_h <- seq(0,120,by=5)
-# Write function for demand curve for Sector A
-demand_C_function_h <- function(x){(slope_c*(120-x)) + int_c}
-
-
-# Derive Demand Curve Using the Values 
-demand_C_h <- demand_C_function_h(vector_demand_C_h)
-demand_C_h
-
-# Graph it
-demand_C_gph_h <- curve(demand_C_function_h, from=0, to=120, xlab = "x", ylab = "y")
-
-#Marginal Abatement Costs at 100 Less Emissions
-mch_A <- -8.6444767 + (0.5768419*80)
-mch_B <- 9.3176977 + (0.1987443*100)
-mch_C <- -11.6550307 + (0.7838266*120)
-
-
-
-#WTP for the First Unit 
-mch_A #$37.50288
-mch_B #$29.19213
-mch_C #$82.40416
-
-#Sector C Still Willing to Pay More
-
-
-
-```
 
