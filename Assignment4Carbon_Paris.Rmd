@@ -1,8 +1,8 @@
 ---
 title: "Appendix"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -26,8 +26,9 @@ mc_carbon_df
 
 ```
 
-##Marginal Carbon Abatement Costs and Demand 
+##I. Marginal Carbon Abatement Costs and Demand 
 
+###1. Marginal Abatement Costs
 -A linear regression model was utilized to determine the marginal cost of abatement of carbon for each sector.
 
 -At any quantity, x, the marginal cost of abatement can be obtained using the appropriate function and substracting "x" from the current emissions scenario. 
@@ -141,11 +142,11 @@ carbon_tidy <- mc_carbon_df %>%
   gather(Sector, Price, A:D) 
 ```
 
-####Graphical Representation of Marginal Abatement Costs 
+###2. Graphical Representation of Marginal Abatement Costs 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 #Create a Plot of All Sectors
 
-paris_plot_all <- ggplot(carbon_tidy, aes(x = Abatement, y = Price)) + geom_point() + geom_smooth(method = "lm", title = "Marginal Abatement Costs by Sector", color = "red4") + facet_wrap(~Sector) + theme_classic() + ggtitle("Marginal Abatement Costs by Sector")
+paris_plot_all <- ggplot(carbon_tidy, aes(x = Abatement, y = Price)) + geom_point() + geom_smooth(method = "lm", title = "Marginal Abatement Costs by Sector", color = "red4") + facet_wrap(~Sector) + theme_classic() + ggtitle("Marginal Abatement Costs by Sector") + labs(x = "Abatement (tons of carbon)", y = "Price ($/ton)")
 
 paris_plot_all
 
@@ -267,8 +268,7 @@ mccurrent_D #$87.66576 or intercept
 
 ```
 
-###Demand of Emissions
-At any quanity, x, the marginal cost of abatement can be obtained using the above functions and substracting "x" from the current emissions scenario. The demand curves for each sector were determined through sequential marginal willingness to pay estimations.
+
 ```{r, message = FALSE, echo = FALSE, warning=FALSE, include = FALSE}
 demand_plot <- ggplot(data.frame(x = c(0, 350))) + 
   stat_function(fun = demand_A_function, aes(color = "A")) +
@@ -296,7 +296,7 @@ demand_plot
 ```
 
 ##Cutting Carbon Emissions in Half: Analyzing 3 Policies for Country X
-####Policy Option 1: A Cap on Carbon
+####1. Policy Option: A Cap on Carbon
 
 ```{r include=FALSE}
 # Each sector cuts emissions by 100 - abates 100 
@@ -339,12 +339,12 @@ tca
 
 Marginal cost of abatement curves for each sector are used to calculate the total cost of abating by 100 tons. The area underneath the marginal cost of abatement curve from 0 to 100 gives the total cost of abatement for that sector. The total cost of carbon cap is the sum of the costs of three sectors.
 
-1. Total Cost of Carbon Cap     
+a. Total Cost of Carbon Cap     
 
 The total cost of the carbon cap is $6698.88 
 
 
-2. The Total Cost of a Carbon Cap for Each Sector      
+b. The Total Cost of a Carbon Cap for Each Sector      
 
 The total cost for Sector A is  $2019.76 
 
@@ -353,13 +353,13 @@ The total cost for Sector B is  $1925.49
 The total cost for Sector C is  $2753.63
 
 
-3. The Tax Revenue Generated from a Carbon Cap  
+c. The Tax Revenue Generated from a Carbon Cap  
 
 There is no tax revenue generated with a carbon cap
 
 
 
-####Policy Option 2: A Tax on Carbon
+####2. Policy Option: A Tax on Carbon
 
 ```{r, include = FALSE}
 #Find the Demand Curves for Each Sector and Switch in Terms of X to find Aggregate Demand
@@ -434,7 +434,7 @@ cost_agg_tax <- sum(cost_A_tax, cost_B_tax, cost_C_tax)
 cost_agg_tax
 ```
 
-1. The Total Cost of a Carbon Tax
+a. The Total Cost of a Carbon Tax
 
 The optimal tax is $39.43
 
@@ -443,7 +443,7 @@ This tax is equal to the marginal cost of abatement for the 300th ton of carbon 
 The total cost of a carbon tax is $17707.79
 
 
-2. The Total Cost of a Carbon Tax for Each Sector
+b. The Total Cost of a Carbon Tax for Each Sector
 
 The cost to Sector A is $5095.16
 
@@ -452,7 +452,7 @@ The cost to Sector B is $5604.46
 The cost to Sector C is $7008.16
 
 
-3. The Tax Revenue Generated from a Carbon Tax
+c. The Tax Revenue Generated from a Carbon Tax
 
 The total tax revenue is $11827.97
 
@@ -480,14 +480,14 @@ cost_Agg_cap<- cost_A_cap + cost_B_cap + cost_C_cap
 cost_Agg_cap # $5997.744
 #costagg_cap <- integrate(agg_abate, lower = 0, upper = 300)$value
 ```
-####Policy Option 3: A Cap and Trade Program
+####3. Policy Option: A Cap and Trade Program
 
-1. The Total Cost of a Carbon Cap and Trade Program
+a. The Total Cost of a Carbon Cap and Trade Program
 
 The total cost of a carbon cap and trade program is $5997.74
 
 
-2. The Total Cost of a Carbon Cap and Trade Program for Each Sector
+b. The Total Cost of a Carbon Cap and Trade Program for Each Sector
 
 The cost to Sector A is $1939.66
 
@@ -496,7 +496,7 @@ The cost to Sector B is $1779.91
 The cost to Sector C is $2278.18
 
 
-3. The Tax Revenue Generated from a Carbon Tax
+c. The Tax Revenue Generated from a Carbon Tax
 
 There is no tax revenue generated with cap and trade program 
 
@@ -580,21 +580,19 @@ There is no tax revenue generated with cap and trade program.
 Country "Y" is incentivised to join the market with Country "X" because it will have a benefit of $778.32 if it sells all of its carbon credits to the other three sectors.  While the sectors in Country "X" still have to purchase under the cap and trade program, the addition of Country "Y" lowers the marginal cost of abatement for each ton of carbon.  Without the addition of Sector D, the marginal cost of abatement for Country "X" is 39.43 dollars, whereas with Country "Y" it is only 29.80 dollars for 300 tons. Thus Country "X" is incentivised to welcome Sector D into its market. 
 
 ##Air Pollution
-How much local air pollution would you expect in Country X and Country Y?  
+ 
 
 ```{r include=FALSE}
-total_emission_x <- 300+q_xy_d
+total_emission_x <- 300 + q_xy_D
+total_emission_x
 ```
 
-From the previous question, if country Y enters the carbon market, Country X will be emitting `r round(q_xy_d, digits=2)` more, so the amount of air pollution will be $ `r round(total_emission_x, digits=2)`
+
 
 ```{r include=FALSE}
-total_emission_y <- 300-q_xy_d
+total_emission_y <- 300-q_xy_D
+total_emission_y
 ```
+a. In a market of just Country "X" the local air pollution would be 300 tons. (300 tons carbon emissions*1 ton local air pollution). If Country "Y" is not limited by cap and trade it will emits current scenario of 300 tons of carbon, also generating 300 tons of local pollutants.
 
-Since the Country Y will be abating `r round(q_xy_d, digits=2)`  more, they will be emitting `r round(total_emission_y, digits=2)` tons of carbon, and that will result in `r round(total_emission_y, digits=2)` tons of air pollution.
-
-
-####c. Advice on International Trade of Carbon Emission Credits  
-
-Allowing international trade of carbon emissions is economically efficient but the local impacts of carbon emissions is not captured by this model. If Country Y enters to the market, Country X will be emitting more carbon which will cause a lot of local air pollution.
+b. If Country "Y" joins the Cap and Trade Program, Country "X" will be emitting more carbon. Thus its local pollution will rise from 300 tons to 377.39 tons after purchasing the 77.39 abatement tons from Country "Y".  Since Country "Y" sells some of its carbon emissions, it will have less local pollution.  Its local air pollution will be reduced from 300 tons to 222.61 tons.
