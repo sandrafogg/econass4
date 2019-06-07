@@ -320,6 +320,7 @@ There is no tax revenue for this policy option.
 
 
 ####Policy Option 2: Tax on Carbon
+<<<<<<< HEAD
 
 ```{r}
 #Find the Demand Curves for Each Sector and Switch in Terms of X to find Aggregate Demand
@@ -373,6 +374,9 @@ b_emissions_tax <- b_demand1(optimal_tax)
 c_emissions_tax <- c_demand1(optimal_tax)
 #164.04
 #cost of reduction for sector C
+=======
+```{r}
+>>>>>>> 4accbe4a51dc0260faefa397cec6ec39de0de917
 
 ```
 
